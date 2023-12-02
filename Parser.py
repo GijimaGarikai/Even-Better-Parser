@@ -162,13 +162,11 @@ def make_postfix(expr):
 
 
 def func_eval(parameter, func):
-    print(parameter, func)
     # evaluates all function types (sin, log, etc)
     if func not in functions:
         print(f"{func} is not in the list of available functions")
         return
     input_postfix = make_postfix(parameter)
-    print(input_postfix)
     value = evaluator(input_postfix)
     return functions[func](value)
 
