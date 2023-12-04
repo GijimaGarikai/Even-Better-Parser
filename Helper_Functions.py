@@ -47,6 +47,10 @@ def evaluate(num1, num2, operator):
         return
     return operators[operator](num1, num2)
 
+
+# Helper to good_infix function
+# Finds "block" of expression connected by operators with higher precedence than '-'
+# Returns that block and the position for good_infix to continue from
 def goodfix_helper(expr, start):
     result = []
     for i in range(start, len(expr)):
