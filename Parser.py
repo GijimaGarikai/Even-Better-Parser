@@ -1,3 +1,4 @@
+
 """"Example of shunting yard algorithm to evaluate
     math expressions including operators like +, -, *, /, ^, (, ),
     certain common functions and certain popular constants
@@ -21,7 +22,7 @@
 
 from Math_Functions import precedence as op_precedence
 from Math_Functions import functions, constants, operators
-from Helper_Functions import is_integer_or_decimal, matching_bracket, evaluate, check_element
+from Helper_Functions import goodfix_helper, matching_bracket, evaluate, check_element
 
 
 # Splits expression into its individual parts, operators and operands
@@ -88,7 +89,11 @@ def good_infix(expr):
     cur = []
     result = []
     subtracting = False
-    for op in expr:
+    skip_until = 0
+    for i in range(len(expr)):
+        if i < skip_until:
+            continue
+        op = expr[i]
         if type(op) is str and op in operators:
             if op == '-':
                 subtracting = True
@@ -100,17 +105,24 @@ def good_infix(expr):
             if type(op) is list:
                 op = good_infix(op)
             if subtracting:
-                if cur:
-                    result += cur+[op]
-                else:
-                    result.append(op)
+                # finds the next "block" of the expression
+                # the block is essentially everything connected by an operator with greater precedence than '-'
+                next_op = goodfix_helper(expr, i)
+                cur += next_op[0]
+                skip_until = next_op[1]
+                result += cur
                 cur = []
                 subtracting = False
             else:
                 cur.append(op)
+
     result += cur
     return result
-
+# expr ="3+pi-2-1-0- pi"
+# inf = make_infix(expr)
+# good = good_infix(inf)
+# print(inf)
+# print(good)
 
 def make_postfix(expr):
     stack = []
@@ -227,7 +239,5 @@ def example(expr):
     print("which evaluates to: %.3f" % evaluator(postfix))
 
 
-expr = "2+cos(pi/4)*tan( pi / 4 )+sin(3+pi-2-1-0- pi ) -10-2-1+ ln( e ) - log( 1  0 . 0 ^ 1 0 . 0)"
+expr = "2+cos(pi/4)*tan( pi / 4 )+sin(3+pi-2-1-0- pi ) -10-2*100-1+ ln( e ) - log( 1  0 . 0 ^ 1 0 . 0)"
 example(expr)
-
-
