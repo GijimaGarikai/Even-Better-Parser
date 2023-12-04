@@ -118,11 +118,7 @@ def good_infix(expr):
 
     result += cur
     return result
-# expr ="3+pi-2-1-0- pi"
-# inf = make_infix(expr)
-# good = good_infix(inf)
-# print(inf)
-# print(good)
+
 
 def make_postfix(expr):
     stack = []
