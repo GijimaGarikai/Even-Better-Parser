@@ -1,4 +1,3 @@
-
 """"Example of shunting yard algorithm to evaluate
     math expressions including operators like +, -, *, /, ^, (, ),
     certain common functions and certain popular constants
@@ -10,8 +9,8 @@
     Supported constants:
     e, pi
 
-    Notes: 1) This parser does not recognize implicit multiplication so please
-              explicitly add '*' to indicate multiplication
+    Notes: 1) This parser recognizes implicit multiplication in the following format (Note || indicates OR):
+              (Number||Constant followed by parentheses||function||constant)
            2) This parser ignores all whitespace, even between characters of a
               function name. This means 't a n ( 5 )' is as valid as 'tan(5)'
            3) However, as a result of note (2), functions with similar names will
@@ -51,6 +50,9 @@ def make_infix(expr, start=0, end=-1):
         # makes everything inside a bracket basically a function to be handled
         # adjust bounds to exclude opening and closing brackets
         elif char == '(':
+            if cur:
+                result += ["".join(cur), "*"]
+                cur = []
             last = matching_bracket(expr, i)
             skip_until = last
             result.append(make_infix(expr, i+1, last-1))
@@ -61,6 +63,13 @@ def make_infix(expr, start=0, end=-1):
             result.append(char)
         # if its a letter it must be part of a function name or a constant
         elif char.isalpha():
+            if cur:
+                result += ["".join(cur), "*"]
+                cur = []
+            # No constants match function names so it's fine to have this check
+            if "".join(func) in constants:
+                result += ["".join(func), "*"]
+                func = []
             func.append(char)
         else:
             cur.append(char)
@@ -79,6 +88,8 @@ def make_infix(expr, start=0, end=-1):
         if (len(func) > 5) or (func and not char.isalpha()):
             print("Expression contains an invalid function ->", "".join(func))
             return
+        # if func:
+        #     print(func, cur, 'usss')
     if cur:
         result.append("".join(cur))
     return result
@@ -96,8 +107,11 @@ def good_infix(expr):
         op = expr[i]
         if type(op) is str and op in operators:
             if op == '-':
+                if cur:
+                    result += [cur]
+                cur = [op]
                 subtracting = True
-            if cur:
+            elif cur:
                 cur.append(op)
             else:
                 result = [result]+[op]
@@ -110,7 +124,7 @@ def good_infix(expr):
                 next_op = goodfix_helper(expr, i)
                 cur += next_op[0]
                 skip_until = next_op[1]
-                result += cur
+                result = [result] + cur
                 cur = []
                 subtracting = False
             else:
@@ -235,5 +249,8 @@ def example(expr):
     print("which evaluates to: %.3f" % evaluator(postfix))
 
 
-expr = "2+cos(pi/4)*tan( pi / 4 )+sin(3+pi-2-1-0- pi ) -10-2*100-1+ ln( e ) - log( 1  0 . 0 ^ 1 0 . 0)"
+expr = "2+2ecos(pi/4)*2tan( pi / 4 ) -10-2*100-1+ ln( e ) - log( 1  0 . 0 ^ 1 0 . 0)"
 example(expr)
+
+
+
