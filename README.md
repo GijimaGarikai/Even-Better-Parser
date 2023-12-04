@@ -92,7 +92,8 @@ To use the expression evaluator, follow these steps:
 ## Notes
 
 1. **Implicit Multiplication:**
-   - Ensure that multiplication is explicitly indicated with '*' in expressions.
+   - This parser recognizes implicit multiplication in the following format (Note || indicates OR):
+   - ***(Number||Constant followed by parentheses||function||constant)***
 
 2. **Whitespace Handling:**
    - The parser ignores whitespace within expressions but may produce errors with functions having similar names and whitespace in between characters.
