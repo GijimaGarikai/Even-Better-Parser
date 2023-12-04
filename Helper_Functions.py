@@ -47,4 +47,16 @@ def evaluate(num1, num2, operator):
         return
     return operators[operator](num1, num2)
 
+def goodfix_helper(expr, start):
+    result = []
+    for i in range(start, len(expr)):
+        cur = expr[i]
+        if type(cur) is str and cur in op_precedence:
+            if op_precedence[cur] >= op_precedence['-']:
+                return [result, i]
+            result.append(cur)
+        else:
+            result.append(cur)
+    return [result, len(expr)-1]
+
 
