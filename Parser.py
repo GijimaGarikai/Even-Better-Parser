@@ -236,8 +236,13 @@ def evaluator(expr):
         return
     return stack.pop()
 
-
-# example use case
+#bring everything together
+def calculate(expr):
+    infix = make_infix(expr)
+    goodfix = good_infix(infix)
+    postfix = make_postfix(goodfix)
+    return evaluator(postfix)
+# example use case with steps outlined
 def example(expr):
     print(f"After preprocessing, {expr} becomes:")
     infix = make_infix(expr)
@@ -246,7 +251,8 @@ def example(expr):
     print(goodfix, 'better')
     postfix = make_postfix(goodfix)
     print("Then in postfix: ", postfix)
-    print("which evaluates to: %.3f" % evaluator(postfix))
+    print("which evaluates to: %.3f" % calculate(expr))
+
 
 
 expr = "2+2ecos(pi/4)*2tan( pi / 4 ) -10-2*100-1+ ln( e ) - log( 1  0 . 0 ^ 1 0 . 0)"
